@@ -1,0 +1,20 @@
+.m-dnd-list {
+  background: #9fc1e5;
+}
+
+.m-dnd-list__headline {
+  font: 1.2em sans-serif;
+  background: #586b7f;
+  padding: 0.5em;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.m-dnd-list__item-list {
+  min-height: 50%vh;
+  border-radius: 5px;
+  min-height: 100px;
+  margin: 1em 0em;
+  font: 1em sans-serif;
+  color: #2c3640;
+  padding: 0px;
+}

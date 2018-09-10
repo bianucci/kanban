@@ -1,4 +1,9 @@
-import { Component, EventListener, GondelBaseComponent, triggerPublicEvent } from "@gondel/core";
+import {
+  Component,
+  EventListener,
+  GondelBaseComponent,
+  triggerPublicEvent
+} from "@gondel/core";
 
 @Component("Input")
 export class Input extends GondelBaseComponent {

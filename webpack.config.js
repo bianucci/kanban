@@ -6,19 +6,35 @@ module.exports = {
   context: __dirname,
   entry: './src/index.ts',
   module: {
-      rules: [
+    rules: [{
+        test: /\.tsx?$/,
+        use: [{
+          loader: "ts-loader"
+        }]
+      },
+      {
+        test: /\.hbs?$/,
+        use: [{
+          loader: "handlebars-template-loader"
+        }]
+      },
+      {
+        test: /\.scss$/,
+        use: [{
+            loader: "style-loader" // creates style nodes from JS strings
+          },
           {
-              test: /\.tsx?$/,
-              use: [
-                {
-                  loader: 'ts-loader',
-                }
-              ]
+            loader: "css-loader" // translates CSS into CommonJS
+          },
+          {
+            loader: "sass-loader" // compiles Sass to CSS
           }
-      ]
+        ]
+      }
+    ]
   },
   resolve: {
-      extensions: [ '.ts', '.tsx', '.js' ]
+    extensions: [".ts", ".tsx", ".js", ".scss"]
   },
   plugins: [
     new HtmlWebpackPlugin({

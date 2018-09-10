@@ -4,8 +4,15 @@ declare const module: any;
 hot(module);
 
 // Load components
-import "./components/button";
-import "./components/form";
-import "./components/input";
+// import "./components/atoms/button/button";
+// import "./components/atoms/input/input";
+
+// Load all components
+const componentsContext = (require as any).context(
+  "./components",
+  true,
+  /\.ts$/
+);
+componentsContext.keys().forEach(componentsContext);
 
 startComponents();
