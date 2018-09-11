@@ -22,6 +22,7 @@ export class Kanban extends GondelBaseComponent {
     const p = this._ctx.dataset.process;
     this._orderedCategories = p ? p.split(",") : [];
     this._createColumnsForCategories(this._orderedCategories);
+    this._enableColaboration();
   }
 
   _createColumnsForCategories(categories: Array<string>) {
@@ -41,9 +42,10 @@ export class Kanban extends GondelBaseComponent {
     }
     const targetCategory = this._getNextStepInProcess(list.category, 1);
     const l = this._getListForCategory(targetCategory);
-    if (l) {
-      l.appendItem(li);
+    if (!l) {
+      return;
     }
+    l.appendItem(li);
   }
 
   _getContainingListForItem(li): DnDList | undefined {
@@ -75,5 +77,12 @@ export class Kanban extends GondelBaseComponent {
     const column = DOMUtil.createElementFromHTML(columnTpl());
     column.appendChild(dndList as Node);
     return column;
+  }
+
+  _enableColaboration() {
+    var source = new EventSource("http://localhost:8090/stock/transaction");
+    source.onmessage = function(event) {
+      console.log("update", event);
+    };
   }
 }
