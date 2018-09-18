@@ -12,6 +12,7 @@
   "dependencies": {
     "@gondel/core": "*",
     "@gondel/plugin-hot": "*",
+    "axios": "0.18.0",
     "handlebars": "^4.0.11",
     "handlebars-template-loader": "^1.0.0"
   },

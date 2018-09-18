@@ -9,6 +9,7 @@ import {
 import { DOMUtil } from "../../../assets/js/DOMUtil";
 import { DnDList } from "../../molecules/dnd-list/dnd-list";
 import { ListItem } from "../../molecules/list-item/list-item";
+import Service from "../../../assets/js/Service";
 
 var columnTpl = require("./column.hbs");
 
@@ -79,10 +80,47 @@ export class Kanban extends GondelBaseComponent {
     return column;
   }
 
+  _createItem(item) {
+    const newListItem = ListItem.render(item.title);
+    newListItem.setAttribute("draggable", "true");
+    newListItem.setAttribute("data-item-id", item.id);
+    startComponents(newListItem).then((components) => {
+      components.forEach(c => {
+        const li = c as ListItem;
+        li.setId(item.id);
+        this._moveItemToList(li, item.state);
+      });
+    });
+  }
+
+  _handleListItemUpdate(item) {
+    const li = DOMUtil.findGlobalListItem(item.id) as ListItem;
+    if (!li && item.state) {
+      this._createItem(item);
+      return;
+    }
+    const list = this._getContainingListForItem(li);
+    if (!list) {
+      return;
+    }
+    if (li && !item.state) {
+      list.removeItem(li, false);
+      return;
+    }
+    this._moveItemToList(li, item.state);
+  }
+
+  _moveItemToList(li, targetCategory) {
+    const l = this._getListForCategory(targetCategory);
+    if (!l) {
+      return;
+    }
+    l.appendItem(li, false);
+  }
+
   _enableColaboration() {
-    var source = new EventSource("http://localhost:8090/stock/transaction");
-    source.onmessage = function(event) {
-      console.log("update", event);
-    };
+    Service.subscibeToUpdates((updatedListItemEvent) => {
+      this._handleListItemUpdate(updatedListItemEvent);
+    });
   }
 }

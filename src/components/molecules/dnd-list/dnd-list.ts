@@ -3,11 +3,11 @@ import {
   startComponents,
   stopComponents,
   EventListener,
-  GondelBaseComponent,
-  getComponentByDomNode
+  GondelBaseComponent
 } from "@gondel/core";
 
 import { DOMUtil } from "../../../assets/js/DOMUtil";
+import Service from "../../../assets/js/Service";
 import { ListItem } from "../list-item/list-item";
 import "./dnd-list.scss";
 
@@ -39,16 +39,45 @@ export class DnDList extends GondelBaseComponent {
     const newListItem = ListItem.render(title);
     newListItem.setAttribute("draggable", "true");
     this._elements.list.appendChild(newListItem);
-    startComponents(newListItem);
+    startComponents(newListItem).then((components) => {
+      components.forEach((c) => {
+        const li = c as ListItem;
+        Service.saveItem({
+          id: li._id,
+          title: li.getTitle(),
+          state: this._category
+        })
+      });
+    });
   }
 
-  appendItem(li: ListItem) {
+  appendItem(li: ListItem, save=true) {
     this._elements.list.appendChild(li._ctx);
+    
+    if (!save) {
+      return;
+    }
+
+    Service.saveItem({
+      id: li._id,
+      title: li.getTitle(),
+      state: this._category
+    });
   }
 
-  removeItem(li: ListItem) {
+  removeItem(li: ListItem, save=true) {
     stopComponents(li._ctx);
     this._elements.list.removeChild(li._ctx);
+
+    if (!save) {
+      return;
+    }
+
+    Service.deleteItem({
+      id: li._id,
+      state: this._category,
+      title: li.getTitle()
+    })
   }
 
   containsItem(li: ListItem): boolean {
@@ -74,7 +103,7 @@ export class DnDList extends GondelBaseComponent {
   _dropItem(e) {
     e.preventDefault();
     const itemId = e.dataTransfer.getData("item");
-    const li = this._findGlobalListItem(itemId) as ListItem;
+    const li = DOMUtil.findGlobalListItem(itemId) as ListItem;
     if (this.containsItem(li)) {
       return;
     }
@@ -84,13 +113,6 @@ export class DnDList extends GondelBaseComponent {
   @EventListener("gItemCancelled")
   _removeItem(e) {
     this.removeItem(e.data.component);
-  }
-
-  _findGlobalListItem(id) {
-    const node = document.querySelector(
-      `li[data-item-id="${id}"]`
-    ) as HTMLElement;
-    return getComponentByDomNode(node);
   }
 
   public static render(category: String): Element | null {

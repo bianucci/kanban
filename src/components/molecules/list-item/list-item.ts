@@ -45,6 +45,10 @@ export class ListItem extends GondelBaseComponent {
     return this._id;
   }
 
+  setId(id) {
+    this._id = this._ctx.dataset.itemId = id;
+  } 
+
   getTitle(): string {
     const c = this._editableTitleEl.textContent;
     return c ? c.trim() : "";
