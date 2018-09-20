@@ -19,10 +19,17 @@ class Service {
     })
   }
 
-  subscibeToUpdates(cb) {
-    var source = new EventSource("http://localhost:8090/backlog/update");
-    source.onmessage = function(event) {
-      cb(JSON.parse(event.data));
+  subscribeToUpdates(cb) {
+    if (!cb) {
+      return;
+    }
+
+    const source = new EventSource("http://localhost:8090/backlog/update");
+    source.onmessage = (event) => {
+      const update = JSON.parse(event.data);
+      cb(update);
+
+      console.log(event, update);
     };
   }
 }

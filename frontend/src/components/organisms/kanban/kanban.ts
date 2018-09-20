@@ -23,7 +23,7 @@ export class Kanban extends GondelBaseComponent {
     const p = this._ctx.dataset.process;
     this._orderedCategories = p ? p.split(",") : [];
     this._createColumnsForCategories(this._orderedCategories);
-    this._enableColaboration();
+    this._enableCollaboration();
   }
 
   _createColumnsForCategories(categories: Array<string>) {
@@ -118,9 +118,7 @@ export class Kanban extends GondelBaseComponent {
     l.appendItem(li, false);
   }
 
-  _enableColaboration() {
-    Service.subscibeToUpdates((updatedListItemEvent) => {
-      this._handleListItemUpdate(updatedListItemEvent);
-    });
+  _enableCollaboration() {
+    Service.subscribeToUpdates(this._handleListItemUpdate.bind(this));
   }
 }

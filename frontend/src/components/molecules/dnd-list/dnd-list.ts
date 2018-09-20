@@ -81,7 +81,7 @@ export class DnDList extends GondelBaseComponent {
   }
 
   containsItem(li: ListItem): boolean {
-    return this._ctx.contains(li._ctx);
+    return li && this._ctx.contains(li._ctx);
   }
 
   @EventListener("click", ".js-add-item-button")
