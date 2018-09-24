@@ -3,12 +3,14 @@ import {
   startComponents,
   EventListener,
   GondelBaseComponent,
-  findComponents
+  findComponents,
+  getComponentByDomNode
 } from "@gondel/core";
 
 import { DOMUtil } from "../../../assets/js/DOMUtil";
 import { DnDList } from "../../molecules/dnd-list/dnd-list";
 import { ListItem } from "../../molecules/list-item/list-item";
+import { updateServiceEvent } from "../../../assets/js/Service";
 import Service from "../../../assets/js/Service";
 
 var columnTpl = require("./column.hbs");
@@ -80,10 +82,15 @@ export class Kanban extends GondelBaseComponent {
     return column;
   }
 
+  // async _createItem(item) {
   _createItem(item) {
     const newListItem = ListItem.render(item.title);
     newListItem.setAttribute("draggable", "true");
     newListItem.setAttribute("data-item-id", item.id);
+
+    // await startComponents(newListItem);
+    // const newListItemComponent = getComponentByDomNode<ListItem>(newListItem);
+
     startComponents(newListItem).then((components) => {
       components.forEach(c => {
         const li = c as ListItem;
@@ -93,7 +100,8 @@ export class Kanban extends GondelBaseComponent {
     });
   }
 
-  _handleListItemUpdate(item) {
+  @EventListener(updateServiceEvent, 'message')
+  _handleListItemUpdate({eventData: item}) {
     const li = DOMUtil.findGlobalListItem(item.id) as ListItem;
     if (!li && item.state) {
       this._createItem(item);
@@ -119,6 +127,6 @@ export class Kanban extends GondelBaseComponent {
   }
 
   _enableCollaboration() {
-    Service.subscribeToUpdates(this._handleListItemUpdate.bind(this));
+    //Service.subscribeToUpdates(this._handleListItemUpdate.bind(this));
   }
 }

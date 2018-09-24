@@ -1,4 +1,8 @@
 import axios from 'axios';
+import { initEventSource } from './ESPlugin';
+
+const updateService = new EventSource("http://localhost:8090/backlog/update");
+export const updateServiceEvent = initEventSource(updateService, 'json');
 
 class Service {
 
